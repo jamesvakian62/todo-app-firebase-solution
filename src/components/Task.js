@@ -5,7 +5,7 @@ import checkImage from "../images/icon-check.svg";
 import { setDoc,doc } from "firebase/firestore"
 import db from "../utils/firebase";
 
-function Task({ task, tasks, setTasks }) {
+function Task({ task, tasks, setTasks, userId, filteredTasks }) {
 
   const [mutableTask, setMutableTask] = useState(task);
 
@@ -28,9 +28,25 @@ function Task({ task, tasks, setTasks }) {
     // setTasks(updatedTasks);
 
     // #6 for firebase data
-    const docRef = doc(db, "tasks", task.id)
-    const payload = {text: task.text, status: !task.status, id: task.id }
-    setDoc(docRef, payload)
+    // const docRef = doc(db, "tasks", task.id)
+    // const payload = {text: task.text, status: !task.status, id: task.id }
+    // setDoc(docRef, payload)
+
+
+    const docRef = doc(db, "users", userId)
+    // FIND THE TASK IN THE ARRAY TO REPLACE IT
+    // HOW DO I FIND A SPECIFIC OBJECT IN THE ARRAY?
+    let arrayRef = filteredTasks
+    const index = filteredTasks.indexOf(task)
+    arrayRef[index].status = !arrayRef[index].status
+ 
+
+    // WHAT WE WANT THE DOCUMENT TO LOOK LIKE
+    const payload = {
+      tasks: arrayRef
+    }
+
+    setDoc(docRef,payload)
   };
   return (
     <div className="todo-item">

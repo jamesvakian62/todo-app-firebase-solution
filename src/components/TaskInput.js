@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-// #1a Import addDoc and collection from firebase/firestore
-import { addDoc, collection } from 'firebase/firestore'
-// #1b import db from ../utils/firebase.js
-import db from '../utils/firebase'
+// #9 Import setDoc and doc instead of addDoc and collection
+import { addDoc, collection, setDoc, doc} from 'firebase/firestore'
 
-function TaskInput({tasks, setTasks}) {
+import db from '../utils/firebase'
+// #9 import filteredTasks and userID
+function TaskInput({tasks, setTasks, userId, filteredTasks}) {
 
     const createId = (array) => {
         // Store the new array into ids
@@ -48,15 +48,36 @@ function TaskInput({tasks, setTasks}) {
 
 
             // #2b Add a new task document with firebase!
-            const collectionRef = collection(db, "tasks")
-            const payload = {
+        //     const collectionRef = collection(db, "tasks")
+        //     const payload = {
+        //         text: input.trim(),
+        //         status: false
+        //     }
+
+
+        //    await addDoc(collectionRef, payload)
+        //    setInput('')
+
+
+           //#9 Instead of ADDING a new document we just need to update the user document tasks array we have to pass down filteredTasks and userID
+           //#10 Create a new task object and add that to the current array
+            const docRef = doc(db,"users", userId)
+
+            const newTask = {
                 text: input.trim(),
                 status: false
             }
+            
+            let tasksRef = filteredTasks
+            tasksRef.push(newTask)
+            // WHAT DO WE WANT THE DOCUMENT TO LOOK LIKE
+            const payload = {
+                tasks: tasksRef
+            }
 
-
-           await addDoc(collectionRef, payload)
-           setInput('')
+          //#11 use setDoc to update the user document's task array
+            setDoc(docRef,payload)
+            setInput("")
 
         }
 
